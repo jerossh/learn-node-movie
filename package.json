@@ -1,0 +1,21 @@
+{
+  "name": "one",
+  "version": "1.0.0",
+  "description": "learn webapck",
+  "main": "app.js",
+  "scripts": {
+    "test": "1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "dfsdf"
+  },
+  "keywords": [
+    "1989"
+  ],
+  "author": "jon",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "multer": "^1.1.0"
+  }
+}
