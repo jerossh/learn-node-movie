@@ -6,16 +6,17 @@ block content
       .col-md-9
         embed(src="#{movie.flash}", allowFullscreen="true", quality="high", width="720", height="600", align="middle", type="application/x-shockwave-flash")
       .col-md-3
-        dt 电影名字
-        dd= movie.title
-        dt 导演
-        dd= movie.doctor
-        dt 国家
-        dd= movie.country
-        dt 语种
-        dd= movie.language
-        dt 上瘾年份
-        dd= movie.year
-        dt 简介
-        dd= movie.summary
+        dl.dl-horizontal
+          dt 电影名字
+          dd= movie.title
+          dt 导演
+          dd= movie.doctor
+          dt 国家
+          dd= movie.country
+          dt 语种
+          dd= movie.language
+          dt 上瘾年份
+          dd= movie.year
+          dt 简介
+          dd= movie.summary
           

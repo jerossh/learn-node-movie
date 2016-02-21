@@ -3,18 +3,20 @@ var path =require('path')
 var mongoose =require('mongoose')
 var _ = require('underscore')
 var Movie = require('./models/movie')
+var Movie = require('./models/user')
 var bodyParser = require('body-parser')
 var serveStatic = require('serve-static')
-
-var port = process.env.PORT || 3000
+var port =  process.env.PORT ||4000
 var app = express()
 
 mongoose.connect('mongodb://localhost/imooc')
 
 app.set('views', './views/pages')
 app.set('view engine', 'jade')
+app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json())
-app.use(serveStatic(__dirname +'/bower_components'))
+app.use(serveStatic(__dirname +'/public'))
+app.locals.moment =require('moment')
 app.listen(port)
 
 console.log('imooc started on port: ' + port)
@@ -30,6 +32,20 @@ app.get('/', function (req, res) {
       movies: movies              //这个movies怎么来的，上面那条注释的参数里来的
     })
   })
+})
+
+//signup
+app.post('/user/signup', function(req, res){
+  var _user = req.body.user
+  var user = new User(_user)
+
+  user.save(function(err, user){
+    if (err) {
+      console.log(err)
+    }
+    console.log(user)
+  })
+
 })
 
 // detail
@@ -61,10 +77,10 @@ app.get('/admin/movie', function (req, res) {
 })
 
 // admin update movie
-app.get('/admin/admin/update/:id', function(req, res){
+app.get('/admin/update/:id', function(req, res){
   var id = req.params.id
   if(id){
-    movie.findById(id, function(err, movie) {
+    Movie.findById(id, function(err, movie) {
       res.render('admin', {
         title: 'imooc 后台更新',
         movie: movie
@@ -74,13 +90,13 @@ app.get('/admin/admin/update/:id', function(req, res){
 })
 
 //amdin post movie
-app.post('/admin/moviw/new', function(req, res){
-  var id = req.body.move._id
+app.post('/admin/movie/new', function(req, res){
+  var id = req.body.movie._id
   var movieObj = req.body.movie           //这个movie怎么得到的？
   var _movie
 
   if(id !=='undefined'){
-    Movie.fectch(function(err, movie){
+    Movie.findById(function(err, movie){
       if(err) {
         console.log(err)
       }
@@ -93,7 +109,7 @@ app.post('/admin/moviw/new', function(req, res){
         res.redicrect('/movie/' + movie._id)
       })
       })
-}
+    }
     else {
       _movie = new Movie({
         doctor: movieObj.doctor,
@@ -124,4 +140,19 @@ app.get('/admin/list', function (req, res) {
       movies: movies              //这个movie怎么来的
     })
   })
+})
+
+app.delete('/admin/list', function(err, movie) {
+  var id = req.query.id
+
+  if(id) {
+    Movie.remove({_id: id}, function(err,movie) {
+      if (err) {
+        console.log(err)
+      }
+      else {
+        res.json({success: 1})
+      }
+    })
+  }
 })
