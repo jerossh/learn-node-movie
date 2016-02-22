@@ -8,7 +8,6 @@ var UserSchema = new mongoose.Schema({
     type: String
   },
   password: {
-    unique: true,
     type: String
   },
 
@@ -45,6 +44,16 @@ bcrypt.genSalt(SALT_WORK_FACTOR,function(err,salt){
   // 调用next方法，让存储流程走下去
   next()
 })
+
+UserSchema.methods = {
+  comparePassword: function(_password, cb) {               //cb 提交的方法  _password怎么来的？
+    bcrypt.compare(_password, this.password, function(err, isMatch){
+      if (err) return cb(err)
+
+      cb(null, isMatch)
+    })
+  }
+}
 
 UserSchema.statics = {
   fetch: function(cb){   //取出目前数据库所有的数据

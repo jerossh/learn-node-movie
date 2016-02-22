@@ -3,18 +3,29 @@ var path =require('path')
 var mongoose =require('mongoose')
 var _ = require('underscore')
 var Movie = require('./models/movie')
-var Movie = require('./models/user')
+var User = require('./models/user')
 var bodyParser = require('body-parser')
 var serveStatic = require('serve-static')
+
+//for the offline storage
+var session = require('express-session')
+var cookieParser = require('cookie-parser')
+
 var port =  process.env.PORT ||4000
 var app = express()
 
-mongoose.connect('mongodb://localhost/imooc')
+mongoose.connect('mongodb://localhost/imoocj')
 
 app.set('views', './views/pages')
 app.set('view engine', 'jade')
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json())
+app.use(cookieParser())         //session 依赖的中间件
+app.use(session({               //用来本地存储信息
+  secret: 'imoocj',
+  resave:false,
+  saveUninitialized:true
+}))
 app.use(serveStatic(__dirname +'/public'))
 app.locals.moment =require('moment')
 app.listen(port)
@@ -23,6 +34,8 @@ console.log('imooc started on port: ' + port)
 
 // index
 app.get('/', function (req, res) {
+  console.log('user in session: ')
+  console.log(req.session.user)
   Movie.fetch(function(err,movies){    //这个第二个参数
     if(err){
       console.log(err)
@@ -37,15 +50,68 @@ app.get('/', function (req, res) {
 //signup
 app.post('/user/signup', function(req, res){
   var _user = req.body.user
-  var user = new User(_user)
 
+  User.findOne({name: _user.name}, function(err, user){
+    if (err){
+      console.log(err)
+    }
+    if(user){
+      console.log('The user exist!');
+    }
+  })
+  var user = new User(_user)
   user.save(function(err, user){
     if (err) {
       console.log(err)
     }
-    console.log(user)
+    console.log(user);
   })
 
+})
+
+// userlist page
+app.get('/admin/userlist', function (req, res) {
+  User.fetch(function(err,users){
+    if(err){
+      console.log(err)
+    }
+    res.render('userlist',{
+      title:'imooc 用户列表页',
+      users: users
+    })
+  })
+})
+
+// signin
+app.post('/user/signin', function(req, res){
+  var _user = req.body.user
+  var name = _user.name
+  var password = _user.password
+
+  User.findOne({name: name}, function(err, user) {
+    if (err) {
+      console.log(err)
+    }
+
+    if (!user) {
+      console.log('The user does not exist!');
+    }
+
+    user.comparePassword(password, function(err, isMatch) {
+      if (err) {
+        console.log(err)
+      }
+
+      if (isMatch) {
+        req.session.user
+        console.log('Password is matched');
+        return res.redicrect('/')
+      }
+      else {
+        console.log('Password is not matched');
+      }
+    })
+  })
 })
 
 // detail
@@ -142,6 +208,8 @@ app.get('/admin/list', function (req, res) {
   })
 })
 
+
+//删除电影
 app.delete('/admin/list', function(err, movie) {
   var id = req.query.id
 
