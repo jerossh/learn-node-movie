@@ -41,8 +41,7 @@ bcrypt.genSalt(SALT_WORK_FACTOR,function(err,salt){
       next()
     })
 })
-  // 调用next方法，让存储流程走下去
-  next()
+
 })
 
 UserSchema.methods = {

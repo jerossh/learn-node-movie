@@ -2,6 +2,7 @@ var express = require('express')
 var path =require('path')
 var mongoose =require('mongoose')
 var _ = require('underscore')
+var mongoStore = require('connect-mongodb')
 var Movie = require('./models/movie')
 var User = require('./models/user')
 var bodyParser = require('body-parser')
@@ -13,18 +14,23 @@ var cookieParser = require('cookie-parser')
 
 var port =  process.env.PORT ||4000
 var app = express()
+var dburl = 'mongodb://localhost/imoocj'
 
-mongoose.connect('mongodb://localhost/imoocj')
+mongoose.connect(dburl)
 
 app.set('views', './views/pages')
 app.set('view engine', 'jade')
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json())
-app.use(cookieParser())         //session 依赖的中间件
-app.use(session({               //用来本地存储信息
+app.use(cookieParser())         //session 依赖的中间件  存储sessionid
+app.use(session({               //用来本地存储信息 store 对象
   secret: 'imoocj',
   resave:false,
-  saveUninitialized:true
+  saveUninitialized:true,
+  store: new mongoStore({
+    url: dburl,
+    collection: 'sessions'      // 这条不懂
+  })
 }))
 app.use(serveStatic(__dirname +'/public'))
 app.locals.moment =require('moment')
@@ -36,6 +42,13 @@ console.log('imooc started on port: ' + port)
 app.get('/', function (req, res) {
   console.log('user in session: ')
   console.log(req.session.user)
+
+  var _user = req.session.user
+
+  if (_user) {                  //从session里面拿出user到本地变量
+    app.locals.user = _user     //本地变量locals，这是express的呀
+  }
+
   Movie.fetch(function(err,movies){    //这个第二个参数
     if(err){
       console.log(err)
@@ -103,15 +116,22 @@ app.post('/user/signin', function(req, res){
       }
 
       if (isMatch) {
-        req.session.user
+        req.session.user = user
         console.log('Password is matched');
-        return res.redicrect('/')
+        return res.redirect('/')
       }
       else {
         console.log('Password is not matched');
       }
     })
   })
+})
+
+// logout
+app.get('/logout', function(req, res){
+  delete req.session.user
+  delete app.locals.user
+  res.redirect('/')
 })
 
 // detail
@@ -172,7 +192,7 @@ app.post('/admin/movie/new', function(req, res){
         if(err){
           console.log(err)
         }
-        res.redicrect('/movie/' + movie._id)
+        res.redirect('/movie/' + movie._id)
       })
       })
     }
@@ -191,7 +211,7 @@ app.post('/admin/movie/new', function(req, res){
         if (err) {
           console.log(err)
         }
-        res.redicrect('/movie/' + movie._id)
+        res.redirect('/movie/' + movie._id)
       })
     }
 })
