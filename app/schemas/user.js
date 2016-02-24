@@ -3,13 +3,23 @@ var bcrypt = require('bcrypt-nodejs')
 var SALT_WORK_FACTOR = 10
 
 var UserSchema = new mongoose.Schema({
+  //可以设置 激活呀，邮箱呀
   name: {
     unique: true,
     type: String
   },
-  password: {
-    type: String
+  password: String,
+
+  role: {
+    type: Number,
+    default: 0
   },
+
+  // 0: nomal user
+  // 1: verified user
+  // 2: professonal user
+  // >10 admin
+  // >50 super admin
 
   meta: {
     creatAt:{

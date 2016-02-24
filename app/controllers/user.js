@@ -22,7 +22,7 @@ exports.signup = function(req, res){
       console.log(err)
     }
     if(user){
-      console.log('The user exist!');
+      return res.redirect('/signin')
     }
   })
   var user = new User(_user)
@@ -30,7 +30,7 @@ exports.signup = function(req, res){
     if (err) {
       console.log(err)
     }
-    console.log(user);
+    return res.redirect('/')
   })
 
 }
@@ -47,7 +47,7 @@ exports.signin = function(req, res){
     }
 
     if (!user) {
-      console.log('The user does not exist!');
+      return res.redirect('/signup')
     }
 
     user.comparePassword(password, function(err, isMatch) {
@@ -61,7 +61,7 @@ exports.signin = function(req, res){
         return res.redirect('/')
       }
       else {
-        console.log('Password is not matched');
+        return res.redirect('/signin')
       }
     })
   })
@@ -85,4 +85,22 @@ exports.list = function (req, res) {
       users: users
     })
   })
+}
+
+// midware for user
+exports.signinRequired = function (req, res, next) {
+  var user = req.session.user
+
+  if (!user) {                     
+    return res.redirect('/signin')
+  }
+  next()
+}
+exports.adminRequired = function (req, res, next) {
+  var user = req.session.user
+
+  if (user.role <= 10) {                      //用户不存在？
+    return res.redirect('/signin')
+  }
+  next()
 }
