@@ -16,7 +16,7 @@ var dburl = 'mongodb://localhost/imoocj'
 
 mongoose.connect(dburl)
 
-app.set('views', './views/pages')
+app.set('views', './app/views/pages')
 app.set('view engine', 'jade')
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json())
@@ -39,6 +39,7 @@ if ('development' === app.get('env')){ //如果是开发环境
   mongoose.set('debug', true)       //数据库请求信息
 }
 
+//路由
 require('./config/routes')(app)    //传入当前app是什么意思，  嗯应该是nodejs基础
 
 app.use(serveStatic(__dirname +'/public'))
