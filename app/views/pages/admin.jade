@@ -3,7 +3,7 @@ extends ../layout
 block content
   .container
     .row
-      form.form-horizontal(method="post", action="/admin/new")
+      form.form-horizontal(method="post", action="/admin/movie")
         //- hiden input???
         if movie._id
         input(type="hidden", name="movie[_id]", value=movie._id)
@@ -30,7 +30,7 @@ block content
         .form-group
           label.col-sm-2.control(for="inputFLash")  片源地址
           .col-sm-10
-            input#inputFLash.form-control(type="text", name="movie[fLash]",value="#{movie.flash}")
+            input#inputFLash.form-control(type="text", name="movie[flash]",value="#{movie.flash}")
         .form-group
           label.col-sm-2.control(for="inputYear")  上映年代
           .col-sm-10

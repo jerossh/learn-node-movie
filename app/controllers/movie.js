@@ -1,15 +1,23 @@
 var Movie = require('../models/movie')
+var Comment = require('../models/comment')
 var _ = require('underscore')
 
 // detail
 exports.detail = function (req, res) {
   var id = req.params.id
   Movie.findById(id, function(err,movie){
-  res.render('detail',{
-    title:'imooc ' + movie.title,
-    movie:movie
+    Comment
+      .find({movie: id})   //movie: id 这是什么意思
+      .populate('from','name')
+      .exec(function(err, comments) {
+        console.log(comments);
+        res.render('detail',{
+          title:'imooc详情页',
+          movie: movie,
+          comments: comments
+        })
+      })
   })
-})
 }
 
 // admin new page
@@ -48,21 +56,22 @@ exports.save = function(req, res){
   var movieObj = req.body.movie           //这个movie怎么得到的？
   var _movie
 
-  if(id !=='undefined'){
-    Movie.findById(function(err, movie){
-      if(err) {
+  if (id) {                              //为什么要这样改，原来的 if(id !=='undefined')
+    Movie.findById(id, function(err, movie) {
+      if (err) {
         console.log(err)
       }
 
-      _movie =  _.extend(movie, movieObj)       // 用到.extend里替换数据的方法
-      _movie.save(function(err, movie){
-        if(err){
+      _movie = _.extend(movie, movieObj)
+      _movie.save(function(err, movie) {
+        if (err) {
           console.log(err)
         }
+
         res.redirect('/movie/' + movie._id)
       })
-      })
-    }
+    })
+  }
     else {
       _movie = new Movie({
         doctor: movieObj.doctor,
