@@ -8,7 +8,7 @@ $(function () {
       type: 'DELETE',
       url: '/admin/list?id' + id
     })
-    .doneZ(function(results) {
+    .done(function(results) {
       if (results.success === 1){
         if (tr.length > 0){
           tr.remove()

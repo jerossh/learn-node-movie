@@ -9,8 +9,9 @@ exports.detail = function (req, res) {
     Comment
       .find({movie: id})   //movie: id 这是什么意思
       .populate('from','name')
+      .populate('reply.from reply.to', 'name')
       .exec(function(err, comments) {
-        console.log(comments);
+        console.log(comments)
         res.render('detail',{
           title:'imooc详情页',
           movie: movie,
