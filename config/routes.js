@@ -2,6 +2,7 @@ var Index = require('../app/controllers/index')
 var Movie = require('../app/controllers/Movie')
 var User = require('../app/controllers/user')
 var Comment = require('../app/controllers/comment')
+var Category = require('../app/controllers/category')
 
 
 module.exports = function(app){           // 这个应该是nodejs基础
@@ -34,4 +35,9 @@ module.exports = function(app){           // 这个应该是nodejs基础
 
   // comment
   app.post('/user/comment', User.signinRequired, Comment.save)
+
+  //category
+  app.get('/admin/category/new', User.signinRequired, User.adminRequired, Category.new)
+  app.post('/admin/category', User.signinRequired, User.adminRequired, Category.save)
+  app.get('/admin/category/list', User.signinRequired, User.adminRequired, Category.list)
 }

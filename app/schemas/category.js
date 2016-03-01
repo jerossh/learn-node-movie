@@ -1,20 +1,10 @@
 var mongoose = require('mongoose')
 var Schema = mongoose.Schema        //每个Schema都会配置ObjectId这个属性
-var ObjectId = Schema.Types.ObjectId     //What is it?  ObjectId
+var ObjectId = Schema.Types.ObjectId
 
-var MovieSchema = new Schema({
-  doctor: String,
-  title: String,
-  language: String,
-  country: String,
-  summary: String,
-  flash: String,
-  poster: String,
-  year: Number,
-  category: {
-    type: ObjectId,
-    ref: 'Category'
-  },
+var CategorySchema = new Schema({
+  name: String,
+  movies:[{type: ObjectId, ref: 'Movie'}],
   meta: {
     creatAt:{
       type:Date,
@@ -27,7 +17,7 @@ var MovieSchema = new Schema({
   }
 })
 
-MovieSchema.pre('save',function(next) {
+CategorySchema.pre('save',function(next) {
   if (this.isNew) {
     this.meta.creatAt = this.meta.updateAt = Date.now()
   }
@@ -39,7 +29,7 @@ MovieSchema.pre('save',function(next) {
   next()
 })
 
-MovieSchema.statics = {
+CategorySchema.statics = {
   fetch: function(cb){   //取出目前数据库所有的数据
     return this
       .find({})
@@ -53,4 +43,4 @@ MovieSchema.statics = {
   }
 }
 
-module.exports = MovieSchema
+module.exports = CategorySchema

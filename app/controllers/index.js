@@ -1,18 +1,19 @@
 var Movie = require('../models/movie')
+var category = require('../models/category')
 
-// index
+// index page
 exports.index = function(req, res){
+  Category
+    .find({})
+    .populate({path: 'movies', option: {limit: 5}})
+    .exec(function(err, categories){
+      if (err){
+        console.log(err)
+      }
+    })
 
-  console.log('user in session: ')
-  console.log(req.session.user)
-
-  Movie.fetch(function(err,movies){    //这个第二个参数
-    if(err){
-      console.log(err)
-    }
     res.render('index',{
       title:'imooc 首页',
-      movies: movies              //这个movies怎么来的，上面那条注释的参数里来的
+      categories: categories       //这个movies怎么来的，上面那条注释的参数里来的
     })
-  })
-}
+  }
