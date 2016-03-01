@@ -1,5 +1,6 @@
 var Movie = require('../models/movie')
 var Comment = require('../models/comment')
+var Category = require('../models/category')
 var _ = require('underscore')
 
 // detail
@@ -22,19 +23,13 @@ exports.detail = function (req, res) {
 }
 
 // admin new page
-exports.new = function (req, res) {
-  res.render('admin',{
-    title:'imooc 后台录入页',
-    movie:{
-      title:'',
-      doctor: '',
-      country: '',
-      year: '',
-      poster: '',
-      language: '',
-      flash: '',
-      summary:''
-    }
+exports.new = function(req, res) {
+  Category.find({}, function(err, categories) {
+    res.render('admin', {
+      title: 'imooc 后台录入页',
+      categories: categories,
+      movie: {}
+    })
   })
 }
 
@@ -74,21 +69,23 @@ exports.save = function(req, res){
     })
   }
     else {
-      _movie = new Movie({
-        doctor: movieObj.doctor,
-        title: movieObj.title,
-        country: movieObj.country,
-        language: movieObj.language,
-        year: movieObj.year,
-        poster: movieObj.poster,
-        summary: movieObj.summary,
-        flash: movieObj.flash
-      })
+      _movie = new Movie(movieObj)
+
+      var categoryId = _movie.category
+
       _movie.save(function(err, movie) {
         if (err) {
           console.log(err)
         }
-        res.redirect('/movie/' + movie._id)
+
+        Category.findById(categoryId, function(err, category) {
+
+          category.movies.push(movie._id)          //这段什么意思， 怎么关联呢
+
+          category.save(function(err, category){
+            res.redirect('/movie/' + movie._id)
+          })
+        })
       })
     }
 }

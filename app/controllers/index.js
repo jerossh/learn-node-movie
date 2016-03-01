@@ -1,11 +1,14 @@
 var Movie = require('../models/movie')
-var category = require('../models/category')
+var Category = require('../models/category')
 
 // index page
 exports.index = function(req, res){
   Category
     .find({})
-    .populate({path: 'movies', option: {limit: 5}})
+    .populate({
+      path: 'movies',       //path这个又是什么意思呢
+      options: {limit: 5}
+    })
     .exec(function(err, categories){
       if (err){
         console.log(err)
