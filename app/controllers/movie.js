@@ -38,9 +38,12 @@ exports.update = function(req, res){
   var id = req.params.id
   if(id){
     Movie.findById(id, function(err, movie) {
-      res.render('admin', {
-        title: 'imooc 后台更新',
-        movie: movie
+      Category.find({}, function(err, categories) {
+        res.render('admin', {
+          title: 'imooc 后台更新',
+          movie: movie,
+          categories: categories      // 这段是要干嘛
+        })
       })
     })
   }
@@ -79,10 +82,9 @@ exports.save = function(req, res){
         }
 
         Category.findById(categoryId, function(err, category) {
+          category.movies.push(movie._id)
 
-          category.movies.push(movie._id)          //这段什么意思， 怎么关联呢
-
-          category.save(function(err, category){
+          category.save(function(err, category) {
             res.redirect('/movie/' + movie._id)
           })
         })

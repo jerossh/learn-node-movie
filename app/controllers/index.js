@@ -17,6 +17,7 @@ exports.index = function(req, res){
 
     res.render('index',{
       title:'imooc 首页',
-      categories: categories       //这个movies怎么来的，上面那条注释的参数里来的
+      //这个movies怎么来的，上面那条注释的参数里来的  所以category为什么不显示
+      categories: categories
     })
   }
