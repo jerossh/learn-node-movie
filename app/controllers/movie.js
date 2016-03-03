@@ -75,19 +75,34 @@ exports.save = function(req, res){
       _movie = new Movie(movieObj)
 
       var categoryId = _movie.category
+      var categoryName = _movie.categoryName
 
       _movie.save(function(err, movie) {
         if (err) {
           console.log(err)
         }
+        console.log(movieObj);
+        if (categoryId){
+          Category.findById(categoryId, function(err, category) {
+            category.movies.push(movie._id)
 
-        Category.findById(categoryId, function(err, category) {
-          category.movies.push(movie._id)
-
-          category.save(function(err, category) {
-            res.redirect('/movie/' + movie._id)
+            category.save(function(err, category) {
+              res.redirect('/movie/' + movie._id)
+            })
           })
-        })
+        }
+        else if (categoryName) {
+          var category =new Category({       //新创建一个类
+            name: categoryName,
+            movie: [movie._id]
+          })
+          category.save(function(err, category) {  //movie 的category这一块不懂
+            movie.category = category._id         //这几个populate方法还真不熟悉
+            movie.save(function(err,movie){
+              res.redirect('/movie/' + movie._id)
+            })
+          })
+        }
       })
     }
 }
