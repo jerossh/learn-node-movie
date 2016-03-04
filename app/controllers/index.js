@@ -2,23 +2,22 @@ var Movie = require('../models/movie')
 var Category = require('../models/category')
 
 // index page
-exports.index = function(req, res){
+exports.index = function(req, res) {
   Category
     .find({})
     .populate({
-      path: 'movies',       //path这个又是什么意思呢
-      select: 'title poster',   //What is it?
-      options: {limit: 5}
+      path: 'movies',
+      select: 'title poster',
+      options: { limit: 6 }
     })
-    .exec(function(err, categories){
-      if (err){
+    .exec(function(err, categories) {
+      if (err) {
         console.log(err)
       }
     })
 
-    res.render('index',{
-      title:'imooc 首页',
-      //这个movies怎么来的，上面那条注释的参数里来的  所以category为什么不显示
+    res.render('index', {
+      title: 'imooc 首页',
       categories: categories
     })
   }
@@ -27,15 +26,15 @@ exports.index = function(req, res){
   exports.search = function(req, res){
     var catId = req.query.cat     //  怎么不需要取出来呢？
     var page = req.query.p
-    var idnex = page*2    //没页查询数量
+    var count = 2
+    var index = page*count   //没页查询数量
 
 
     Category
       .find({_id: catId})
       .populate({
         path: 'movies',       //path这个又是什么意思呢
-        select: 'title poster',   //What is it?
-        options: {limit: 2， skip: index}
+        select: 'title poster'  //What is it?
       })
       .exec(function(err, categories){
         if (err){
@@ -43,10 +42,16 @@ exports.index = function(req, res){
         }
       })
       var category = categories[0] || {}      //
+      var movies = category.movies || []
+      var results = movies.slice(index, index + count)
+
       res.render('results',{
         title:'imooc 结果列表页面',
         //这个movies怎么来的，上面那条注释的参数里来的  所以category为什么不显示
         keyword: category.name,
-        category: category
+        currentPage: (page +1),
+        query: 'cat=' + catId,
+        totalPage: Math.ceil(movies.length / count),
+        movies: results
       })
     }
