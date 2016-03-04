@@ -14,11 +14,10 @@ exports.index = function(req, res) {
       if (err) {
         console.log(err)
       }
-    })
-
-    res.render('index', {
-      title: 'imooc 首页',
-      categories: categories
+      res.render('index', {
+        title: 'imooc 首页',
+        categories: categories
+      })
     })
   }
 
