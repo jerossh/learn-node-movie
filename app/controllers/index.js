@@ -39,18 +39,19 @@ exports.index = function(req, res) {
         if (err){
           console.log(err)
         }
-      })
-      var category = categories[0] || {}      //
-      var movies = category.movies || []
-      var results = movies.slice(index, index + count)
+        var category = categories[0] || {}      //
+        var movies = category.movies || []
+        var results = movies.slice(index, index + count)
 
-      res.render('results',{
-        title:'imooc 结果列表页面',
-        //这个movies怎么来的，上面那条注释的参数里来的  所以category为什么不显示
-        keyword: category.name,
-        currentPage: (page +1),
-        query: 'cat=' + catId,
-        totalPage: Math.ceil(movies.length / count),
-        movies: results
+        res.render('results',{
+          title:'imooc 结果列表页面',
+          //这个movies怎么来的，上面那条注释的参数里来的  所以category为什么不显示
+          keyword: category.name,
+          currentPage: (page +1),
+          query: 'cat=' + catId,
+          totalPage: Math.ceil(movies.length / count),
+          movies: results
+        })
       })
+
     }

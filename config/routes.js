@@ -42,5 +42,5 @@ module.exports = function(app){           // 这个应该是nodejs基础
   app.get('/admin/category/list', User.signinRequired, User.adminRequired, Category.list)
 
   //category
-  app.get('/result', Index.search)
+  app.get('/results', Index.search)
 }
