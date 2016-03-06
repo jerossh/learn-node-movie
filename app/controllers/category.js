@@ -7,7 +7,7 @@ var _ = require('underscore')
 exports.new = function (req, res) {
   res.render('category_admin',{
     title:'imooc 分类后台录入页',
-    category: {}                          //需要给jade属性一个
+    category: {}                      //需要给jade属性一个
   })
 }
 

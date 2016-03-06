@@ -5,6 +5,7 @@ var mongoStore = require('connect-mongodb')
 var bodyParser = require('body-parser')
 var serveStatic = require('serve-static')
 var morgan = require('morgan');
+var multipart = require('connect-multiparty')
 
 //for the offline storage
 var session = require('express-session')
@@ -18,7 +19,8 @@ mongoose.connect(dburl)
 
 app.set('views', './app/views/pages')
 app.set('view engine', 'jade')
-app.use(bodyParser.urlencoded({extended:true}));
+app.use(bodyParser.urlencoded({extended:true}))
+app.use(multipart())
 app.use(bodyParser.json())
 app.use(cookieParser())         //session 依赖的中间件  存储sessionid
 app.use(session({               //用来本地存储信息 store 对象
