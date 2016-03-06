@@ -8,6 +8,13 @@ var path = require('path')
 // detail
 exports.detail = function (req, res) {
   var id = req.params.id
+
+  Movie.update({_id: id}, {$inc: {pv: 1}}, function(err) {  // NOTE: 写法很想mongo里的
+    if (err) {
+      console.log(err)
+    }
+  })
+
   Movie.findById(id, function(err,movie){
     Comment
       .find({movie: id})   //movie: id 这是什么意思
@@ -44,7 +51,7 @@ exports.update = function(req, res){
         res.render('admin', {
           title: 'imooc 后台更新',
           movie: movie,
-          categories: categories      // 这段是要干嘛
+          categories: categories
         })
       })
     })
