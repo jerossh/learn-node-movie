@@ -6,6 +6,7 @@ var bodyParser = require('body-parser')
 var serveStatic = require('serve-static')
 var morgan = require('morgan');
 var multipart = require('connect-multiparty')
+var fs = require('fs')
 
 //for the offline storage
 var session = require('express-session')
@@ -16,6 +17,26 @@ var app = express()
 var dburl = 'mongodb://localhost/imoocj'
 
 mongoose.connect(dburl)
+
+var models_path = __dirname + '/app/models'
+var walk = function(path) {
+  fs
+    .readdirSync(path)
+    .forEach(function(file) {
+      var newPath = path + '/' + file
+      var stat = fs.statSync(newPath)
+
+      if (stat.isFile()) {
+        if (/(.*)\.(js|coffee)/.test(file)) {
+          require(newPath)
+        }
+      }
+      else if (stat.isDirectory()) {
+        walk(newPath)
+      }
+    })
+}
+walk(models_path)
 
 app.set('views', './app/views/pages')
 app.set('view engine', 'jade')
