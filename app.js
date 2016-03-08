@@ -18,6 +18,7 @@ var dburl = 'mongodb://localhost/imoocj'
 
 mongoose.connect(dburl)
 
+// models loading
 var models_path = __dirname + '/app/models'
 var walk = function(path) {
   fs
