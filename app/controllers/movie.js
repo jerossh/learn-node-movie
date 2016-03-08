@@ -113,8 +113,8 @@ exports.save = function(req, res){
     else {
       _movie = new Movie(movieObj)
 
-      var categoryId = _movie.category
-      var categoryName = _movie.categoryName
+      var categoryId = movieObj.category
+      var categoryName = movieObj.categoryName
 
       _movie.save(function(err, movie) {
         if (err) {
