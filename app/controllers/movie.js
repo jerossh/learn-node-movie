@@ -146,7 +146,7 @@ exports.save = function(req, res){
 }
 
 // list page
-exports.list = function (req, res) {
+exports.list = function(req, res) {
   Movie.fetch(function(err,movies){
     if(err){
       console.log(err)
@@ -159,13 +159,14 @@ exports.list = function (req, res) {
 }
 
 //删除电影
-exports.del = function(err, movie) {
+exports.del = function(req, res) {   //怎么写还是不懂呢
   var id = req.query.id
 
-  if(id) {
-    Movie.remove({_id: id}, function(err,movie) {
+  if (id) {
+    Movie.remove({_id: id}, function(err, movie) {
       if (err) {
         console.log(err)
+        res.json({success: 0})
       }
       else {
         res.json({success: 1})
